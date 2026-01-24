@@ -3,6 +3,7 @@
 ## 🚀 Local Development Setup
 
 ### 1. Prerequisites
+
 ```bash
 # Required software
 - Node.js 18+
@@ -12,6 +13,7 @@
 ```
 
 ### 2. Installation
+
 ```bash
 # Clone repository
 git clone <your-repo>
@@ -28,6 +30,7 @@ nano .env
 ```
 
 ### 3. Database Setup
+
 ```bash
 # For PostgreSQL
 createdb restaurant_ai
@@ -38,6 +41,7 @@ npm run db:setup
 ```
 
 ### 4. Start Development Server
+
 ```bash
 npm run dev
 
@@ -45,6 +49,7 @@ npm run dev
 ```
 
 ### 5. Expose Local Server (for webhooks)
+
 ```bash
 # In new terminal
 ngrok http 3000
@@ -63,28 +68,21 @@ ngrok http 3000
 2. **Configure Square app:**
    - Redirect URL: `https://abc123.ngrok.io/auth/square/callback`
 3. **Test authorization:**
+
    ```bash
    # Open in browser
    http://localhost:3000/auth/square?restaurant_id=test_rest_1
    ```
+
 4. **Complete authorization** on Square page
 5. **Check logs** for tokens
-
-### Testing Clover OAuth
-
-1. **Configure Clover app:**
-   - Redirect URL: `https://abc123.ngrok.io/auth/clover/callback`
-2. **Test authorization:**
-   ```bash
-   http://localhost:3000/auth/clover?restaurant_id=test_rest_1
-   ```
-3. **Complete authorization** on Clover page
 
 ---
 
 ## 📋 Testing API Endpoints
 
 ### Get Menu
+
 ```bash
 # Square menu
 curl http://localhost:3000/api/menu/test_rest_1
@@ -94,6 +92,7 @@ curl http://localhost:3000/api/menu/search/test_rest_1/burger
 ```
 
 ### Create Order
+
 ```bash
 curl -X POST http://localhost:3000/api/orders \
   -H "Content-Type: application/json" \
@@ -122,6 +121,7 @@ curl -X POST http://localhost:3000/api/orders \
 ## 🔔 Testing Webhooks
 
 ### Square Webhook Test
+
 ```bash
 # Configure in Square Dashboard:
 # Webhook URL: https://abc123.ngrok.io/webhook/square
@@ -131,6 +131,7 @@ curl -X POST http://localhost:3000/api/orders \
 ```
 
 ### Retell Webhook Test
+
 ```bash
 # Configure in Retell Dashboard:
 # Webhook URL: https://abc123.ngrok.io/webhook/retell
@@ -205,6 +206,7 @@ sudo apt-get install nginx
 ## 🔧 Production Configuration
 
 ### Nginx Configuration
+
 ```nginx
 server {
     listen 80;
@@ -222,6 +224,7 @@ server {
 ```
 
 ### SSL Certificate (Let's Encrypt)
+
 ```bash
 sudo apt-get install certbot python3-certbot-nginx
 sudo certbot --nginx -d yourdomain.com
@@ -253,12 +256,14 @@ sudo certbot --nginx -d yourdomain.com
 ## 📊 Monitoring & Logs
 
 ### View Logs (PM2)
+
 ```bash
 pm2 logs restaurant-ai
 pm2 monit
 ```
 
 ### Database Monitoring
+
 ```bash
 # PostgreSQL
 psql -d restaurant_ai -c "SELECT * FROM restaurants;"
@@ -266,6 +271,7 @@ psql -d restaurant_ai -c "SELECT COUNT(*) FROM orders;"
 ```
 
 ### Health Check
+
 ```bash
 curl https://yourdomain.com/health
 ```
@@ -275,18 +281,21 @@ curl https://yourdomain.com/health
 ## 🐛 Troubleshooting
 
 ### OAuth Issues
+
 - ✅ Check redirect URLs match exactly
 - ✅ Verify credentials are correct
 - ✅ Ensure HTTPS in production
 - ✅ Check token expiration
 
 ### Webhook Issues
+
 - ✅ Verify webhook URL is accessible
 - ✅ Check signature verification
 - ✅ Review webhook logs
 - ✅ Test with ngrok first
 
 ### Database Issues
+
 - ✅ Check DATABASE_URL format
 - ✅ Verify database exists
 - ✅ Run migrations: `npm run db:setup`
@@ -297,6 +306,7 @@ curl https://yourdomain.com/health
 ## 📞 Support
 
 For issues:
+
 1. Check server logs
 2. Review webhook event logs
 3. Test in sandbox first

@@ -1,6 +1,7 @@
 # 🚀 Quick Start Guide - 15 Minutes to First Order
 
 ## Prerequisites (5 minutes)
+
 ```bash
 ✅ Node.js 18+ installed
 ✅ Square Developer account (free, instant)
@@ -28,7 +29,8 @@ cp .env.example .env
 ## Step 2: Setup Square (3 minutes)
 
 ### A. Create Square App
-1. Go to: https://developer.squareup.com/apps
+
+1. Go to: <https://developer.squareup.com/apps>
 2. Click "+" to create app
 3. Name it: "Voice AI Test"
 4. Copy credentials:
@@ -39,6 +41,7 @@ SQUARE_APPLICATION_SECRET=sq0csp-xxxxxxxxxxxxx
 ```
 
 ### B. Get Sandbox Token
+
 1. In Square app, click "OAuth" tab
 2. Scroll to "Test accounts"
 3. Click "Generate token"
@@ -50,7 +53,9 @@ SQUARE_ENVIRONMENT=sandbox
 ```
 
 ### C. Get Location ID
+
 1. Run this command:
+
 ```bash
 node -e "
 const { Client } = require('square');
@@ -64,7 +69,8 @@ client.locationsApi.listLocations().then(r =>
 "
 ```
 
-2. Add to `.env`:
+1. Add to `.env`:
+
 ```env
 SQUARE_LOCATION_ID=Lxxxxxxxxxxxxx
 ```
@@ -94,6 +100,7 @@ ngrok http 3000
 ```
 
 Copy the ngrok URL (e.g., `https://abc123.ngrok.io`) and update `.env`:
+
 ```env
 BASE_URL=https://abc123.ngrok.io
 ```
@@ -105,6 +112,7 @@ Restart server: `npm start`
 ## Step 5: Connect Restaurant (2 minutes)
 
 ### A. Register Restaurant
+
 ```bash
 curl -X POST http://localhost:3000/api/restaurants \
   -H "Content-Type: application/json" \
@@ -119,6 +127,7 @@ curl -X POST http://localhost:3000/api/restaurants \
 Save the restaurant ID (e.g., `rest_1234567890`)
 
 ### B. Test OAuth (Optional)
+
 ```bash
 # Open in browser
 http://localhost:3000/auth/square?restaurant_id=rest_1234567890
@@ -171,10 +180,11 @@ curl -X POST http://localhost:3000/api/orders \
 ### Add Retell AI (Voice Ordering)
 
 1. **Get Retell API Key:**
-   - Sign up at https://retellai.com
+   - Sign up at <https://retellai.com>
    - Copy API key to `.env`
 
 2. **Configure Webhook:**
+
    ```env
    RETELL_API_KEY=key_xxxxxxxxxxxxx
    RETELL_AGENT_ID=agent_xxxxxxxxxxxxx
@@ -190,12 +200,13 @@ curl -X POST http://localhost:3000/api/orders \
 ## 🔄 Setup n8n Automation
 
 1. **Install n8n:**
+
    ```bash
    npx n8n
    ```
 
 2. **Import workflow:**
-   - Open n8n: http://localhost:5678
+   - Open n8n: <http://localhost:5678>
    - Settings → Import
    - Select: `src/n8n/workflows.json`
 
@@ -206,9 +217,10 @@ curl -X POST http://localhost:3000/api/orders \
 ## 📱 Add Clover POS
 
 1. **Create Clover app:**
-   - https://www.clover.com/developers
-   
+   - <https://www.clover.com/developers>
+
 2. **Add to `.env`:**
+
    ```env
    CLOVER_APP_ID=xxxxxxxxxxxxx
    CLOVER_APP_SECRET=xxxxxxxxxxxxx
@@ -216,6 +228,7 @@ curl -X POST http://localhost:3000/api/orders \
    ```
 
 3. **Connect restaurant:**
+
    ```bash
    # Open in browser
    http://localhost:3000/auth/clover
@@ -226,20 +239,24 @@ curl -X POST http://localhost:3000/api/orders \
 ## 🐛 Troubleshooting
 
 ### "Cannot find module 'square'"
+
 ```bash
 npm install
 ```
 
 ### "Database connection failed"
+
 ```bash
 npm run db:setup
 ```
 
 ### "Invalid access token"
+
 - Generate new sandbox token from Square dashboard
 - Update SQUARE_ACCESS_TOKEN in .env
 
 ### "Webhook not working"
+
 - Ensure ngrok is running
 - Update BASE_URL in .env
 - Restart server
@@ -248,10 +265,10 @@ npm run db:setup
 
 ## 📚 Resources
 
-- **Square API Docs:** https://developer.squareup.com/docs
-- **Clover API Docs:** https://docs.clover.com
-- **Retell AI Docs:** https://docs.retellai.com
-- **n8n Docs:** https://docs.n8n.io
+- **Square API Docs:** <https://developer.squareup.com/docs>
+
+- **Retell AI Docs:** <https://docs.retellai.com>
+- **n8n Docs:** <https://docs.n8n.io>
 
 ---
 
@@ -271,7 +288,7 @@ npm run db:setup
 - [ ] Configure webhooks
 - [ ] Setup SMS notifications
 - [ ] Deploy to production
-- [ ] Add Clover integration
+
 - [ ] Connect Retell AI
 - [ ] Build admin dashboard
 

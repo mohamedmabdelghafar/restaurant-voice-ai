@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 ### 🛡️ Security Improvements
 
 #### Fixed Critical Issues
+
 - **REMOVED** deprecated `crypto` npm package - now uses Node.js built-in `node:crypto`
 - **FIXED** unrestricted CORS - now requires whitelist configuration via `ALLOWED_ORIGINS`
 - **ADDED** rate limiting to prevent DDoS and brute force attacks
@@ -16,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - **IMPROVED** error handling to prevent information leakage
 
 #### Added Security Features
+
 - **Helmet.js** - Advanced HTTP header security
   - Content Security Policy (CSP)
   - HTTP Strict Transport Security (HSTS)
@@ -36,17 +38,20 @@ All notable changes to this project will be documented in this file.
 - **hpp** - HTTP Parameter Pollution protection
 
 #### Enhanced Logging
+
 - **Sensitive data filtering** - Tokens, keys, and secrets removed from logs
 - **Authorization header exclusion** - Auth headers never logged
 - **Sanitized URLs** - Query parameters containing secrets masked
 
 #### Improved Error Handling
+
 - **Production mode** - Generic error messages only
 - **Development mode** - Full stack traces for debugging
 - **Structured logging** - Timestamp, IP, URL, method logged
 - **Graceful shutdown** - Proper cleanup on SIGTERM/SIGINT
 
 ### 📝 Documentation
+
 - **NEW:** `SECURITY.md` - Comprehensive security documentation
 - **NEW:** `CHANGELOG.md` - This file
 - **UPDATED:** `.env.example` - Added `ALLOWED_ORIGINS` configuration
@@ -55,11 +60,13 @@ All notable changes to this project will be documented in this file.
 ### 🔧 Configuration Changes
 
 #### New Environment Variables
+
 ```env
 ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 ```
 
 #### Updated Dependencies
+
 ```json
 {
   "express-rate-limit": "^7.1.5",
@@ -70,6 +77,7 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 ```
 
 ### ⚠️ Breaking Changes
+
 - **CORS Policy Change:** Requests from unlisted origins will now be rejected
   - **Action Required:** Add all frontend domains to `ALLOWED_ORIGINS` in `.env`
   
@@ -77,6 +85,7 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
   - **Action Required:** Implement request batching or contact support for higher limits
 
 ### 📊 Performance Impact
+
 - **Response Time:** +2-5ms average (due to validation)
 - **Memory Usage:** +10-15MB (rate limiting cache)
 - **CPU Usage:** Negligible impact
@@ -86,8 +95,9 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 ## [1.0.0] - 2026-01-17 - Initial Release
 
 ### ✨ Features
-- Multi-POS integration (Square, Clover, Toast)
-- OAuth 2.0 authentication for Square and Clover
+
+- Multi-POS integration (Square)
+- OAuth 2.0 authentication for Square
 - Unified API for menu and order management
 - Webhook handling for real-time updates
 - Retell AI voice ordering integration
@@ -95,13 +105,15 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 - PostgreSQL and SQLite database support
 
 ### 🔧 Components
-- **Authentication** - OAuth handlers for Square and Clover
+
+- **Authentication** - OAuth handlers for Square
 - **API** - Unified interface for all POS systems
-- **Webhooks** - Event handlers for Square, Clover, and Retell
+- **Webhooks** - Event handlers for Square and Retell
 - **Database** - Complete schema with migrations
 - **n8n** - Pre-configured workflow templates
 
 ### 📚 Documentation
+
 - README.md - Project overview
 - QUICKSTART.md - 15-minute getting started guide
 - DEPLOYMENT.md - Production deployment guide
@@ -111,12 +123,14 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 ## Security Ratings
 
 ### Before v1.1.0
+
 - **OWASP Score:** C (Multiple vulnerabilities)
 - **Missing:** Rate limiting, input validation, CORS restrictions
 - **Critical Issues:** 3
 - **High Issues:** 5
 
 ### After v1.1.0
+
 - **OWASP Score:** A- (Production ready)
 - **Addressed:** All critical and high-priority issues
 - **Critical Issues:** 0
@@ -128,17 +142,20 @@ ALLOWED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 ## Migration Guide (v1.0.0 → v1.1.0)
 
 ### Step 1: Update Dependencies
+
 ```bash
 npm install
 ```
 
 ### Step 2: Add New Environment Variable
+
 ```bash
 # Add to .env
 ALLOWED_ORIGINS=http://localhost:3000,https://yourdomain.com
 ```
 
 ### Step 3: Test Changes
+
 ```bash
 # Development
 npm run dev
@@ -152,12 +169,14 @@ curl -H "Origin: http://unauthorized.com" http://localhost:3000/api/restaurants
 ```
 
 ### Step 4: Deploy
+
 ```bash
 # Production
 npm start
 ```
 
 ### Step 5: Monitor
+
 - Check error logs for CORS rejections
 - Monitor rate limit hits
 - Verify validation errors are helpful
@@ -167,6 +186,7 @@ npm start
 ## Upcoming Features (Roadmap)
 
 ### v1.2.0 (Planned)
+
 - [ ] JWT authentication for API
 - [ ] Redis for session storage
 - [ ] User-based rate limiting
@@ -176,6 +196,7 @@ npm start
 - [ ] Real-time monitoring dashboard
 
 ### v1.3.0 (Planned)
+
 - [ ] GraphQL API
 - [ ] WebSocket support for real-time updates
 - [ ] Advanced analytics
