@@ -147,6 +147,9 @@ app.use(logger.httpLogger);
 // 10. Response compression (gzip)
 app.use(compressionMiddleware({ threshold: 1024 }));
 
+// 11. Serve static files (after security/compression, before body parsing/API)
+app.use(express.static('public'));
+
 // ============================================
 // Body Parsing with Size Limits
 // ============================================
@@ -509,7 +512,7 @@ process.on('unhandledRejection', (reason, promise) => {
 server = app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════╗
-║  🚀 Restaurant Voice AI Server           ║
+║  🚀 SmartJump.AI Server                  ║
 ║  Port: ${PORT.toString().padEnd(35)}║
 ║  Environment: ${(process.env.NODE_ENV || 'development').padEnd(27)}║
 ║  Square: ${(process.env.SQUARE_ENVIRONMENT || 'sandbox').padEnd(31)}║

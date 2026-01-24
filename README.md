@@ -1,4 +1,4 @@
-# Restaurant Voice AI - Square POS Integration
+# SmartJump.AI - Square POS Integration
 
 🔒 **v2.0.0 - Square POS Edition**
 
