@@ -1,12 +1,12 @@
 #!/bin/bash
 # ============================================
-# Restaurant Voice AI - Automatic Deployment Script
+# SmartJump.AI - Automatic Deployment Script
 # For Hostinger VPS (Ubuntu/Debian)
 # ============================================
 
 set -e  # Stop on any error
 
-echo "🚀 Starting Restaurant Voice AI Deployment..."
+echo "🚀 Starting SmartJump.AI Deployment..."
 echo "============================================"
 
 # Colors for output

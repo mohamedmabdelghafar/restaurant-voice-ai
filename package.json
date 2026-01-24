@@ -1,7 +1,7 @@
 {
-  "name": "restaurant-voice-ai",
-  "version": "1.1.0",
-  "description": "Multi-POS AI Voice Ordering System",
+  "name": "smartjump-ai",
+  "version": "2.0.0",
+  "description": "SmartJump.AI - Multi-POS Voice Ordering System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
