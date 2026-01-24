@@ -1,0 +1,286 @@
+{
+  "name": "Restaurant Voice AI - Order Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "retell-order",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook - Retell Call Ended",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "retell-order-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.event}}",
+              "operation": "equals",
+              "value2": "call_ended"
+            }
+          ]
+        }
+      },
+      "name": "Is Call Ended?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract order details from Retell transcript\nconst call = $input.item.json.call;\nconst transcript = call.transcript || '';\n\n// Parse order information\nconst orderData = {\n  callId: call.call_id,\n  customerPhone: call.from_number,\n  customerName: extractName(transcript),\n  items: extractItems(transcript),\n  pickupTime: extractPickupTime(transcript),\n  specialInstructions: extractInstructions(transcript),\n  timestamp: new Date().toISOString()\n};\n\nfunction extractName(text) {\n  const nameMatch = text.match(/my name is ([\\w\\s]+)/i);\n  return nameMatch ? nameMatch[1].trim() : 'Guest';\n}\n\nfunction extractItems(text) {\n  // Simplified item extraction\n  const items = [];\n  const itemPattern = /(\\d+)\\s+(\\w+)/g;\n  let match;\n  \n  while ((match = itemPattern.exec(text)) !== null) {\n    items.push({\n      quantity: parseInt(match[1]),\n      name: match[2]\n    });\n  }\n  \n  return items;\n}\n\nfunction extractPickupTime(text) {\n  const timeMatch = text.match(/(\\d{1,2}:\\d{2}|asap|now)/i);\n  return timeMatch ? timeMatch[0] : 'ASAP';\n}\n\nfunction extractInstructions(text) {\n  const instructionsMatch = text.match(/special.*?:(.+?)(?:\\.|$)/i);\n  return instructionsMatch ? instructionsMatch[1].trim() : '';\n}\n\nreturn { json: orderData };"
+      },
+      "name": "Parse Order from Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BASE_URL}}/api/menu/search/{{$json.restaurantId}}/{{$json.items[0].name}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "name": "Search Menu Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Match spoken items to menu items\nconst searchResults = $input.item.json.results;\nconst orderItems = $input.item.json.items;\n\nconst lineItems = orderItems.map(item => {\n  // Find best match in menu\n  const menuItem = searchResults.find(r => \n    r.name.toLowerCase().includes(item.name.toLowerCase())\n  );\n  \n  if (!menuItem) {\n    return null;\n  }\n  \n  return {\n    variationId: menuItem.variations?.[0]?.id,\n    itemId: menuItem.id,\n    name: menuItem.name,\n    quantity: item.quantity,\n    modifiers: [],\n    note: ''\n  };\n}).filter(Boolean);\n\nreturn { json: { lineItems } };"
+      },
+      "name": "Match Items to Menu",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.BASE_URL}}/api/orders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "restaurantId",
+              "value": "={{$json.restaurantId}}"
+            },
+            {
+              "name": "lineItems",
+              "value": "={{$json.lineItems}}"
+            },
+            {
+              "name": "customer",
+              "value": "={{$json.customer}}"
+            },
+            {
+              "name": "fulfillment",
+              "value": "={{$json.fulfillment}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Create Order in POS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "to": "={{$json.customerPhone}}",
+        "message": "=Hi {{$json.customerName}}! Your order has been received. Order ID: {{$json.orderId}}. Pickup time: {{$json.pickupTime}}. Thank you!",
+        "options": {}
+      },
+      "name": "Send SMS Confirmation",
+      "type": "n8n-nodes-base.twilioSms",
+      "typeVersion": 1,
+      "position": [1450, 200],
+      "credentials": {
+        "twilioApi": {
+          "id": "1",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "orders",
+        "columns": "id,restaurant_id,platform,platform_order_id,customer_name,customer_phone,total_amount,status,fulfillment_type,notes",
+        "values": "={{$json.orderId}},={{$json.restaurantId}},={{$json.platform}},={{$json.platformOrderId}},={{$json.customerName}},={{$json.customerPhone}},={{$json.totalAmount}},PENDING,PICKUP,Order from voice call"
+      },
+      "name": "Save Order to Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [1450, 350],
+      "credentials": {
+        "postgres": {
+          "id": "2",
+          "name": "PostgreSQL account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"orderId\": \"{{$json.orderId}}\" }"
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1650, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.status}}",
+              "operation": "equals",
+              "value2": "COMPLETED"
+            }
+          ]
+        }
+      },
+      "name": "Order Completed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1250, 500]
+    },
+    {
+      "parameters": {
+        "to": "={{$json.customerPhone}}",
+        "message": "=Your order is ready for pickup! Order ID: {{$json.orderId}}. See you soon!",
+        "options": {}
+      },
+      "name": "Send Ready Notification",
+      "type": "n8n-nodes-base.twilioSms",
+      "typeVersion": 1,
+      "position": [1450, 450],
+      "credentials": {
+        "twilioApi": {
+          "id": "1",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "Not a call_ended event"
+      },
+      "name": "Ignore Other Events",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [650, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Retell Call Ended": {
+      "main": [
+        [
+          {
+            "node": "Is Call Ended?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Call Ended?": {
+      "main": [
+        [
+          {
+            "node": "Parse Order from Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ignore Other Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Order from Transcript": {
+      "main": [
+        [
+          {
+            "node": "Search Menu Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Menu Items": {
+      "main": [
+        [
+          {
+            "node": "Match Items to Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match Items to Menu": {
+      "main": [
+        [
+          {
+            "node": "Create Order in POS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Order in POS": {
+      "main": [
+        [
+          {
+            "node": "Send SMS Confirmation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Order to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SMS Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {},
+  "versionId": "1",
+  "id": "restaurant-voice-ai-workflow",
+  "meta": {
+    "instanceId": "your-n8n-instance"
+  },
+  "tags": []
+}

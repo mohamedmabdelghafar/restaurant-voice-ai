@@ -1,0 +1,47 @@
+{
+  "name": "restaurant-voice-ai",
+  "version": "1.1.0",
+  "description": "Multi-POS AI Voice Ordering System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "db:setup": "node src/database/setup.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "restaurant",
+    "voice-ai",
+    "pos",
+    "square",
+    "clover",
+    "retell-ai"
+  ],
+  "author": "Mohamed",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "square": "^36.0.0",
+    "axios": "^1.6.2",
+    "uuid": "^9.0.1",
+    "pg": "^8.11.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3"
+  },
+  "optionalDependencies": {
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
